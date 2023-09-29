@@ -8,7 +8,7 @@ A peer-to-peer protocol for voice assistants (basically [JSONL](https://jsonline
 <payload_length bytes (optional)>
 ```
 
-Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and the [Year of Voice](https://www.home-assistant.io/blog/2022/12/20/year-of-voice/)
+Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and the [Home Assistant](https://www.home-assistant.io/integrations/wyoming) for communication with voice services.
 
 ## Format
 
@@ -19,16 +19,18 @@ Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and the [Year of Voice](
     * `payload_length` - bytes of binary payload (int, optional)
 2. Additional data (UTF-8, optional)
     * JSON object with additional event-specific data
-    * Overwrites header `data`
+    * Merged on top of header `data`
     * Exactly `data_length` bytes long
     * Immediately follows header `\n`
 3. Payload
-    * Typically PCM audio
+    * Typically PCM audio but can be any binary data
     * Exactly `payload_length` bytes long
     * Immediately follows additional data or header `\n` if no additional data
 
 
 ## Events Types
+
+Available events with `type` and fields.
 
 ### Audio
 

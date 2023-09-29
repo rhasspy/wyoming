@@ -1,13 +1,14 @@
 # Wyoming Protocol
 
-A peer-to-peer event protocol for voice assistants (basically [JSONL](https://jsonlines.org/) + PCM audio)
+A peer-to-peer protocol for voice assistants (basically [JSONL](https://jsonlines.org/) + PCM audio)
 
 ``` text
 { "type": "...", "data": { ... }, "data_length": ..., "payload_length": ... }\n
 <data_length bytes (optional)>
-<payload_bytes (optional)>
+<payload_length bytes (optional)>
 ```
 
+Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and the [Year of Voice](https://www.home-assistant.io/blog/2022/12/20/year-of-voice/)
 
 ## Format
 
@@ -25,8 +26,6 @@ A peer-to-peer event protocol for voice assistants (basically [JSONL](https://js
     * Typically PCM audio
     * Exactly `payload_length` bytes long
     * Immediately follows additional data or header `\n` if no additional data
-
----
 
 
 ## Events Types
@@ -164,8 +163,6 @@ Handle structured intents or text directly.
 Play audio stream.
 
 * `played` - response when audio finishes playing
-
----
 
 
 ## Event Flow

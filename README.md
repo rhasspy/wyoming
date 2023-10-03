@@ -10,6 +10,13 @@ A peer-to-peer protocol for voice assistants (basically [JSONL](https://jsonline
 
 Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and the [Home Assistant](https://www.home-assistant.io/integrations/wyoming) for communication with voice services.
 
+## Wyoming Projects
+
+* [Piper](https://github.com/rhasspy/wyoming-piper) text to speech
+* [Faster Whisper](https://github.com/rhasspy/wyoming-faster-whisper) speech to text
+* [openWakeWord](https://github.com/rhasspy/wyoming-openwakeword) wake word detection
+* [porcupine1](https://github.com/rhasspy/wyoming-porcupine1) wake word detection
+
 ## Format
 
 1. A JSON object header as a single line with `\n` (UTF-8, required)

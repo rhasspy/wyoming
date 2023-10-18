@@ -16,6 +16,7 @@ Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and the [Home Assistant]
 * [Faster Whisper](https://github.com/rhasspy/wyoming-faster-whisper) speech to text
 * [openWakeWord](https://github.com/rhasspy/wyoming-openwakeword) wake word detection
 * [porcupine1](https://github.com/rhasspy/wyoming-porcupine1) wake word detection
+* [snowboy](https://github.com/rhasspy/wyoming-snowboy) wake word detection
 
 ## Format
 

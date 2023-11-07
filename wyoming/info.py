@@ -100,10 +100,24 @@ class WakeProgram(Artifact):
 
 
 @dataclass
+class IntentModel(Artifact):
+    languages: List[str]
+
+
+@dataclass
+class IntentProgram(Artifact):
+    models: List[IntentModel]
+
+
+# -----------------------------------------------------------------------------
+
+
+@dataclass
 class Info(Eventable):
     asr: List[AsrProgram] = field(default_factory=list)
     tts: List[TtsProgram] = field(default_factory=list)
     handle: List[HandleProgram] = field(default_factory=list)
+    intent: List[IntentProgram] = field(default_factory=list)
     wake: List[WakeProgram] = field(default_factory=list)
 
     @staticmethod
@@ -115,6 +129,7 @@ class Info(Eventable):
             "asr": [p.to_dict() for p in self.asr],
             "tts": [p.to_dict() for p in self.tts],
             "handle": [p.to_dict() for p in self.handle],
+            "intent": [p.to_dict() for p in self.intent],
             "wake": [p.to_dict() for p in self.wake],
         }
 
@@ -127,5 +142,6 @@ class Info(Eventable):
             asr=[AsrProgram.from_dict(d) for d in event.data.get("asr", [])],
             tts=[TtsProgram.from_dict(d) for d in event.data.get("tts", [])],
             handle=[HandleProgram.from_dict(d) for d in event.data.get("handle", [])],
+            intent=[IntentProgram.from_dict(d) for d in event.data.get("intent", [])],
             wake=[WakeProgram.from_dict(d) for d in event.data.get("wake", [])],
         )

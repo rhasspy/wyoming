@@ -38,6 +38,7 @@ class Recognize(Eventable):
 class Intent(Eventable):
     name: str
     entities: List[Entity] = field(default_factory=list)
+    text: Optional[str] = None
 
     @staticmethod
     def is_type(event_type: str) -> bool:
@@ -47,6 +48,8 @@ class Intent(Eventable):
         data: Dict[str, Any] = {"name": self.name}
         if self.entities:
             data["entities"] = [asdict(entity) for entity in self.entities]
+        if self.text is not None:
+            data["text"] = self.text
 
         return Event(type=_INTENT_TYPE, data=data)
 
@@ -60,7 +63,7 @@ class Intent(Eventable):
         else:
             entities = []
 
-        return Intent(name=data["name"], entities=entities)
+        return Intent(name=data["name"], entities=entities, text=data.get("text"))
 
     @staticmethod
     def from_event(event: Event) -> "Intent":

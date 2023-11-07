@@ -103,6 +103,15 @@ Describe available services.
                 * `url` - URL of creator (required)
             * `installed` - true if currently installed (bool, required)
             * `description` - human-readable description (string, optional)
+    * `intent` - list intent recognition services (optional)
+        * `models` - list of available models (required)
+            * `name` - unique name (required)
+            * `languages` - supported languages by model (list of string, required)
+            * `attribution` (required)
+                * `name` - name of creator (required)
+                * `url` - URL of creator (required)
+            * `installed` - true if currently installed (bool, required)
+            * `description` - human-readable description (string, optional)
     
 ### Speech Recognition
 
@@ -156,6 +165,7 @@ Recognizes intents from text.
     * `entities` - list of entities (optional)
         * `name` - name of entity (string, required)
         * `value` - value of entity (any, optional)
+    * `text` - response for user (string, optional)
 * `not-recognized` - response indicating no intent was recognized
     * `text` - response for user (string, optional)
 

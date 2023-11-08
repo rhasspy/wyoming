@@ -12,6 +12,7 @@ _NOT_HANDLED_TYPE = "not-handled"
 @dataclass
 class Handled(Eventable):
     text: Optional[str] = None
+    context: Optional[Dict[str, Any]] = None
 
     @staticmethod
     def is_type(event_type: str) -> bool:
@@ -21,18 +22,21 @@ class Handled(Eventable):
         data: Dict[str, Any] = {}
         if self.text is not None:
             data["text"] = self.text
+        if self.context is not None:
+            data["context"] = self.context
 
         return Event(type=_HANDLED_TYPE, data=data)
 
     @staticmethod
     def from_event(event: Event) -> "Handled":
         assert event.data is not None
-        return Handled(text=event.data.get("text"))
+        return Handled(text=event.data.get("text"), context=event.data.get("context"))
 
 
 @dataclass
 class NotHandled(Eventable):
     text: Optional[str] = None
+    context: Optional[Dict[str, Any]] = None
 
     @staticmethod
     def is_type(event_type: str) -> bool:
@@ -42,10 +46,14 @@ class NotHandled(Eventable):
         data: Dict[str, Any] = {}
         if self.text is not None:
             data["text"] = self.text
+        if self.context is not None:
+            data["context"] = self.context
 
         return Event(type=_NOT_HANDLED_TYPE, data=data)
 
     @staticmethod
     def from_event(event: Event) -> "NotHandled":
         assert event.data is not None
-        return NotHandled(text=event.data.get("text"))
+        return NotHandled(
+            text=event.data.get("text"), context=event.data.get("context")
+        )

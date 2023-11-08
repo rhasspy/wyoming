@@ -19,6 +19,7 @@ class Entity:
 @dataclass
 class Recognize(Eventable):
     text: str
+    context: Optional[Dict[str, Any]] = None
 
     @staticmethod
     def is_type(event_type: str) -> bool:
@@ -26,12 +27,14 @@ class Recognize(Eventable):
 
     def event(self) -> Event:
         data: Dict[str, Any] = {"text": self.text}
+        if self.context is not None:
+            data["context"] = self.context
         return Event(type=_RECOGNIZE_TYPE, data=data)
 
     @staticmethod
     def from_event(event: Event) -> "Recognize":
         assert event.data is not None
-        return Recognize(text=event.data["text"])
+        return Recognize(text=event.data["text"], context=event.data.get("context"))
 
 
 @dataclass
@@ -39,6 +42,7 @@ class Intent(Eventable):
     name: str
     entities: List[Entity] = field(default_factory=list)
     text: Optional[str] = None
+    context: Optional[Dict[str, Any]] = None
 
     @staticmethod
     def is_type(event_type: str) -> bool:
@@ -50,6 +54,8 @@ class Intent(Eventable):
             data["entities"] = [asdict(entity) for entity in self.entities]
         if self.text is not None:
             data["text"] = self.text
+        if self.context is not None:
+            data["context"] = self.context
 
         return Event(type=_INTENT_TYPE, data=data)
 
@@ -63,7 +69,12 @@ class Intent(Eventable):
         else:
             entities = []
 
-        return Intent(name=data["name"], entities=entities, text=data.get("text"))
+        return Intent(
+            name=data["name"],
+            entities=entities,
+            text=data.get("text"),
+            context=data.get("context"),
+        )
 
     @staticmethod
     def from_event(event: Event) -> "Intent":
@@ -86,6 +97,7 @@ class Intent(Eventable):
 @dataclass
 class NotRecognized(Eventable):
     text: Optional[str] = None
+    context: Optional[Dict[str, Any]] = None
 
     @staticmethod
     def is_type(event_type: str) -> bool:
@@ -95,10 +107,14 @@ class NotRecognized(Eventable):
         data: Dict[str, Any] = {}
         if self.text is not None:
             data["text"] = self.text
+        if self.context is not None:
+            data["context"] = self.context
 
         return Event(type=_NOT_RECOGNIZED_TYPE, data=data)
 
     @staticmethod
     def from_event(event: Event) -> "NotRecognized":
         assert event.data is not None
-        return NotRecognized(text=event.data.get("text"))
+        return NotRecognized(
+            text=event.data.get("text"), context=event.data.get("context")
+        )

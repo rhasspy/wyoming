@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -55,6 +56,20 @@ async def async_get_stdin(
     )
 
     return reader
+
+
+async def async_get_stdout(
+    loop: Optional[asyncio.AbstractEventLoop] = None,
+) -> asyncio.StreamWriter:
+    """Get StreamWriter for stdout."""
+    if loop is None:
+        loop = asyncio.get_running_loop()
+
+    writer_transport, writer_protocol = await loop.connect_write_pipe(
+        lambda: asyncio.streams.FlowControlMixin(loop=loop),
+        os.fdopen(sys.stdout.fileno(), "wb"),
+    )
+    return asyncio.streams.StreamWriter(writer_transport, writer_protocol, None, loop)
 
 
 async def async_read_event(reader: asyncio.StreamReader) -> Optional[Event]:

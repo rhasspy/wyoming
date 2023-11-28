@@ -28,6 +28,12 @@ class AsyncClient(ABC):
         assert self._writer is not None
         await async_write_event(event, self._writer)
 
+    async def connect(self) -> None:
+        pass
+
+    async def disconnect(self) -> None:
+        pass
+
     @staticmethod
     def from_uri(uri: str) -> "AsyncClient":
         result = urlparse(uri)
@@ -55,15 +61,17 @@ class AsyncTcpClient(AsyncClient):
         self.host = host
         self.port = port
 
-    async def __aenter__(self):
+    async def connect(self) -> None:
         self._reader, self._writer = await asyncio.open_connection(
             host=self.host,
             port=self.port,
         )
 
+    async def __aenter__(self):
+        await self.connect()
         return self
 
-    async def __aexit__(self, exc_type, exc_value, traceback):
+    async def disconnect(self) -> None:
         writer = self._writer
         self._reader = None
         self._writer = None
@@ -71,6 +79,9 @@ class AsyncTcpClient(AsyncClient):
         if writer is not None:
             writer.close()
             await writer.wait_closed()
+
+    async def __aexit__(self, exc_type, exc_value, traceback):
+        await self.disconnect()
 
 
 class AsyncUnixClient(AsyncClient):
@@ -81,14 +92,16 @@ class AsyncUnixClient(AsyncClient):
 
         self.socket_path = socket_path
 
-    async def __aenter__(self):
+    async def connect(self) -> None:
         self._reader, self._writer = await asyncio.open_unix_connection(
             path=self.socket_path
         )
 
+    async def __aenter__(self):
+        await self.connect()
         return self
 
-    async def __aexit__(self, exc_type, exc_value, traceback):
+    async def disconnect(self) -> None:
         writer = self._writer
         self._reader = None
         self._writer = None
@@ -96,6 +109,9 @@ class AsyncUnixClient(AsyncClient):
         if writer is not None:
             writer.close()
             await writer.wait_closed()
+
+    async def __aexit__(self, exc_type, exc_value, traceback):
+        await self.disconnect()
 
 
 class AsyncStdioClient(AsyncClient):

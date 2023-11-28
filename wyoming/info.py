@@ -113,12 +113,21 @@ class IntentProgram(Artifact):
 
 
 @dataclass
+class Satellite(Artifact):
+    area: Optional[str] = None
+
+
+# -----------------------------------------------------------------------------
+
+
+@dataclass
 class Info(Eventable):
     asr: List[AsrProgram] = field(default_factory=list)
     tts: List[TtsProgram] = field(default_factory=list)
     handle: List[HandleProgram] = field(default_factory=list)
     intent: List[IntentProgram] = field(default_factory=list)
     wake: List[WakeProgram] = field(default_factory=list)
+    satellite: Optional[Satellite] = None
 
     @staticmethod
     def is_type(event_type: str) -> bool:
@@ -133,15 +142,25 @@ class Info(Eventable):
             "wake": [p.to_dict() for p in self.wake],
         }
 
+        if self.satellite is not None:
+            data["satellite"] = self.satellite.to_dict()
+
         return Event(type=_INFO_TYPE, data=data)
 
     @staticmethod
     def from_event(event: Event) -> "Info":
         assert event.data is not None
+
+        satellite: Optional[Satellite] = None
+        satellite_data = event.data.get("satellite")
+        if satellite_data is not None:
+            satellite = Satellite.from_dict(satellite_data)
+
         return Info(
             asr=[AsrProgram.from_dict(d) for d in event.data.get("asr", [])],
             tts=[TtsProgram.from_dict(d) for d in event.data.get("tts", [])],
             handle=[HandleProgram.from_dict(d) for d in event.data.get("handle", [])],
             intent=[IntentProgram.from_dict(d) for d in event.data.get("intent", [])],
             wake=[WakeProgram.from_dict(d) for d in event.data.get("wake", [])],
+            satellite=satellite,
         )

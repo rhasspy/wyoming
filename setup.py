@@ -25,4 +25,5 @@ setup(
         "Programming Language :: Python :: 3.11",
     ],
     keywords="voice assistant rhasspy",
+    extras_require={"zeroconf": ["zeroconf==0.88.0"]},
 )

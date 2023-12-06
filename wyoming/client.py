@@ -24,7 +24,7 @@ class AsyncClient(ABC):
         assert self._reader is not None
         return await async_read_event(self._reader)
 
-    async def write_event(self, event: Event):
+    async def write_event(self, event: Event) -> None:
         assert self._writer is not None
         await async_write_event(event, self._writer)
 
@@ -130,7 +130,7 @@ class AsyncStdioClient(AsyncClient):
         assert self._reader is not None
         return await async_read_event(self._reader)
 
-    async def write_event(self, event: Event):
+    async def write_event(self, event: Event) -> None:
         if self._writer is None:
             self._writer = await async_get_stdout()
 

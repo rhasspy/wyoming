@@ -6,7 +6,7 @@ from .event import Event, Eventable
 
 DOMAIN = "asr"
 _TRANSCRIPT_TYPE = "transcript"
-_TRANSCRIBE_TYPE = "transcibe"
+_TRANSCRIBE_TYPE = "transcribe"
 
 
 @dataclass

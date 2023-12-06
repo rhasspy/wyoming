@@ -2,6 +2,7 @@
 import asyncio
 import contextlib
 import logging
+import time
 from asyncio.subprocess import Process
 from typing import List, Optional
 
@@ -75,6 +76,7 @@ class MicProcessAsyncClient(AsyncClient, contextlib.AbstractAsyncContextManager)
                 width=self.width,
                 channels=self.channels,
                 audio=audio_bytes,
+                timestamp=time.monotonic_ns(),
             ).event()
         except asyncio.IncompleteReadError:
             return None

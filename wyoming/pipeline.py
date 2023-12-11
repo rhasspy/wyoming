@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, Optional
 
+from .audio import AudioFormat
 from .event import Event, Eventable
 
 _RUN_PIPELINE_TYPE = "run-pipeline"
@@ -27,6 +28,9 @@ class RunPipeline(Eventable):
 
     name: Optional[str] = None
     """Name of pipeline to run"""
+
+    snd_format: Optional[AudioFormat] = None
+    """Desired format for audio output."""
 
     def __post_init__(self) -> None:
         start_valid = True
@@ -87,13 +91,29 @@ class RunPipeline(Eventable):
         if self.name is not None:
             data["name"] = self.name
 
+        if self.snd_format is not None:
+            data["snd_format"] = {
+                "rate": self.snd_format.rate,
+                "width": self.snd_format.width,
+                "channels": self.snd_format.channels,
+            }
+
         return Event(type=_RUN_PIPELINE_TYPE, data=data)
 
     @staticmethod
     def from_event(event: Event) -> "RunPipeline":
         assert event.data is not None
+        snd_format = event.data.get("snd_format")
+
         return RunPipeline(
             start_stage=PipelineStage(event.data["start_stage"]),
             end_stage=PipelineStage(event.data["end_stage"]),
             name=event.data.get("name"),
+            snd_format=AudioFormat(
+                rate=snd_format["rate"],
+                width=snd_format["width"],
+                channels=snd_format["channels"],
+            )
+            if snd_format
+            else None,
         )

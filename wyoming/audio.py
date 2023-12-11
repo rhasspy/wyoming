@@ -15,8 +15,8 @@ _STOP_TYPE = "audio-stop"
 
 
 @dataclass
-class AudioChunk(Eventable):
-    """Chunk of raw PCM audio."""
+class AudioFormat:
+    """Base class for events with audio format information."""
 
     rate: int
     """Hertz"""
@@ -26,6 +26,11 @@ class AudioChunk(Eventable):
 
     channels: int
     """Mono = 1"""
+
+
+@dataclass
+class AudioChunk(AudioFormat, Eventable):
+    """Chunk of raw PCM audio."""
 
     audio: bytes
     """Raw audio"""
@@ -52,13 +57,12 @@ class AudioChunk(Eventable):
     @staticmethod
     def from_event(event: Event) -> "AudioChunk":
         assert event.data is not None
-        assert event.payload is not None
 
         return AudioChunk(
             rate=event.data["rate"],
             width=event.data["width"],
             channels=event.data["channels"],
-            audio=event.payload,
+            audio=event.payload or bytes(),
             timestamp=event.data.get("timestamp"),
         )
 
@@ -76,17 +80,8 @@ class AudioChunk(Eventable):
 
 
 @dataclass
-class AudioStart(Eventable):
+class AudioStart(AudioFormat, Eventable):
     """Audio stream has started."""
-
-    rate: int
-    """Hertz"""
-
-    width: int
-    """Bytes"""
-
-    channels: int
-    """Mono = 1"""
 
     timestamp: Optional[int] = None
     """Milliseconds"""

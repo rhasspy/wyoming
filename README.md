@@ -12,11 +12,14 @@ Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and the [Home Assistant]
 
 ## Wyoming Projects
 
+* [Satellite](https://github.com/rhasspy/wyoming-satellite) for Home Assistant 
 * [Piper](https://github.com/rhasspy/wyoming-piper) text to speech
 * [Faster Whisper](https://github.com/rhasspy/wyoming-faster-whisper) speech to text
 * [openWakeWord](https://github.com/rhasspy/wyoming-openwakeword) wake word detection
 * [porcupine1](https://github.com/rhasspy/wyoming-porcupine1) wake word detection
 * [snowboy](https://github.com/rhasspy/wyoming-snowboy) wake word detection
+* [mic-external](https://github.com/rhasspy/wyoming-mic-external)
+* [snd-external](https://github.com/rhasspy/wyoming-snd-external)
 
 ## Format
 

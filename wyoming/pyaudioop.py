@@ -189,6 +189,11 @@ def ratecv(
 
     input_frames = fragment_length // bytes_per_frame
     output_frames = int(math.ceil(input_frames * (outrate / inrate)))
+
+    # Approximate version used in C code to avoid overflow:
+    # q = 1 + ((input_frames - 1) // inrate)
+    # output_frames = q * outrate * bytes_per_frame
+
     result = bytearray(output_frames * bytes_per_frame)
     struct_format = _SIGNED_FORMATS[width]
 
@@ -200,7 +205,9 @@ def ratecv(
                 samps = tuple(
                     (prev_i[chan], cur_i[chan]) for chan in range(0, nchannels)
                 )
-                return result, (d, samps)
+
+                # NOTE: It's critical that result is clipped here
+                return result[:output_index], (d, samps)
 
             for chan in range(0, nchannels):
                 prev_i[chan] = cur_i[chan]

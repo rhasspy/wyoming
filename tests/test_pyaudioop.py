@@ -33,6 +33,7 @@ INVALID_DATA = [
 
 
 def test_lin2lin() -> None:
+    """Test sample width conversions."""
     for w in 1, 2, 4:
         assert pyaudioop.lin2lin(datas[w], w, w) == datas[w]
         assert pyaudioop.lin2lin(bytearray(datas[w]), w, w) == datas[w]
@@ -55,6 +56,7 @@ def test_lin2lin() -> None:
 
 
 def test_tomono() -> None:
+    """Test mono channel conversion."""
     for w in 1, 2, 4:
         data1 = datas[w]
         data2 = bytearray(2 * len(data1))
@@ -70,6 +72,7 @@ def test_tomono() -> None:
 
 
 def test_tostereo() -> None:
+    """Test stereo channel conversion."""
     for w in 1, 2, 4:
         data1 = datas[w]
         data2 = bytearray(2 * len(data1))
@@ -85,6 +88,7 @@ def test_tostereo() -> None:
 
 
 def test_ratecv() -> None:
+    """Test sample rate conversion."""
     for w in 1, 2, 4:
         assert pyaudioop.ratecv(b"", w, 1, 8000, 8000, None) == (b"", (-1, ((0, 0),)))
         assert pyaudioop.ratecv(bytearray(), w, 1, 8000, 8000, None) == (
@@ -103,21 +107,21 @@ def test_ratecv() -> None:
         assert pyaudioop.ratecv(datas[w], w, 1, 8000, 8000, None)[0] == datas[w]
         assert pyaudioop.ratecv(datas[w], w, 1, 8000, 8000, None, 1, 0)[0] == datas[w]
 
-    # Python implementation is slightly different
     state = None
-    d1, state = pyaudioop.ratecv(b"\x00\x01\x02", 1, 1, 8000, 16000, state)
-    d2, state = pyaudioop.ratecv(b"\x00\x01\x02", 1, 1, 8000, 16000, state)
-    assert d1 + d2 == b"\000\000\001\001\002\000\001\000\000\001\001\002"
+    d1, state = pyaudioop.ratecv(b'\x00\x01\x02', 1, 1, 8000, 16000, state)
+    d2, state = pyaudioop.ratecv(b'\x00\x01\x02', 1, 1, 8000, 16000, state)
+    assert d1 + d2 == b'\000\000\001\001\002\001\000\000\001\001\002'
 
-    # for w in 1, 2, 4:
-    #     d0, state0 = pyaudioop.ratecv(datas[w], w, 1, 8000, 16000, None)
-    #     d, state = b"", None
-    #     for i in range(0, len(datas[w]), w):
-    #         d1, state = pyaudioop.ratecv(datas[w][i : i + w], w, 1, 8000, 16000, state)
-    #         d += d1
-    #     assert d == d0
-    #     assert state == state0
+    for w in 1, 2, 4:
+        d0, state0 = pyaudioop.ratecv(datas[w], w, 1, 8000, 16000, None)
+        d, state = b"", None
+        for i in range(0, len(datas[w]), w):
+            d1, state = pyaudioop.ratecv(datas[w][i : i + w], w, 1, 8000, 16000, state)
+            d += d1
+        assert d == d0
+        assert state == state0
 
+    # Not sure why this is still failing, but the crackling is gone!
     # expected = {
     #     1: packs[1](0, 0x0D, 0x37, -0x26, 0x55, -0x4B, -0x14),
     #     2: packs[2](0, 0x0DA7, 0x3777, -0x2630, 0x5673, -0x4A64, -0x129A),

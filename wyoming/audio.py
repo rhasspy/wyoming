@@ -6,7 +6,12 @@ import wave
 from dataclasses import dataclass
 from typing import Iterable, Optional
 
-from . import pyaudioop
+try:
+    # Use built-in audioop until it's removed in Python 3.13
+    import audioop  # pylint: disable=deprecated-module
+except ImportError:
+    from . import pyaudioop as audioop  # type: ignore[no-redef]
+
 from .event import Event, Eventable
 
 _CHUNK_TYPE = "audio-chunk"
@@ -136,7 +141,7 @@ class AudioStop(Eventable):
 
 @dataclass
 class AudioChunkConverter:
-    """Converts audio chunks using pyaudioop."""
+    """Converts audio chunks using audioop/pyaudioop."""
 
     rate: Optional[int] = None
     width: Optional[int] = None
@@ -157,16 +162,16 @@ class AudioChunkConverter:
 
         if (self.width is not None) and (chunk.width != self.width):
             # Convert sample width
-            audio_bytes = pyaudioop.lin2lin(audio_bytes, chunk.width, self.width)
+            audio_bytes = audioop.lin2lin(audio_bytes, chunk.width, self.width)
             width = self.width
 
         channels = chunk.channels
         if (self.channels is not None) and (chunk.channels != self.channels):
             # Convert to mono or stereo
             if self.channels == 1:
-                audio_bytes = pyaudioop.tomono(audio_bytes, width, 1.0, 1.0)
+                audio_bytes = audioop.tomono(audio_bytes, width, 1.0, 1.0)
             elif self.channels == 2:
-                audio_bytes = pyaudioop.tostereo(audio_bytes, width, 1.0, 1.0)
+                audio_bytes = audioop.tostereo(audio_bytes, width, 1.0, 1.0)
             else:
                 raise ValueError(f"Cannot convert to channels: {self.channels}")
 
@@ -175,7 +180,7 @@ class AudioChunkConverter:
         rate = chunk.rate
         if (self.rate is not None) and (chunk.rate != self.rate):
             # Resample
-            audio_bytes, self._ratecv_state = pyaudioop.ratecv(
+            audio_bytes, self._ratecv_state = audioop.ratecv(
                 audio_bytes,
                 width,
                 channels,

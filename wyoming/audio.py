@@ -200,10 +200,7 @@ class AudioChunkConverter:
 
 
 def wav_to_chunks(
-    wav_file: wave.Wave_read,
-    samples_per_chunk: int,
-    timestamp: int = 0,
-    stream_id: Optional[str] = None,
+    wav_file: wave.Wave_read, samples_per_chunk: int, timestamp: int = 0
 ) -> Iterable[AudioChunk]:
     """Splits WAV file into AudioChunks."""
     rate = wav_file.getframerate()

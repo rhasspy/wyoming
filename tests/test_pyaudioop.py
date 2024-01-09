@@ -1,4 +1,5 @@
 import sys
+
 from wyoming import pyaudioop
 
 
@@ -108,9 +109,9 @@ def test_ratecv() -> None:
         assert pyaudioop.ratecv(datas[w], w, 1, 8000, 8000, None, 1, 0)[0] == datas[w]
 
     state = None
-    d1, state = pyaudioop.ratecv(b'\x00\x01\x02', 1, 1, 8000, 16000, state)
-    d2, state = pyaudioop.ratecv(b'\x00\x01\x02', 1, 1, 8000, 16000, state)
-    assert d1 + d2 == b'\000\000\001\001\002\001\000\000\001\001\002'
+    d1, state = pyaudioop.ratecv(b"\x00\x01\x02", 1, 1, 8000, 16000, state)
+    d2, state = pyaudioop.ratecv(b"\x00\x01\x02", 1, 1, 8000, 16000, state)
+    assert d1 + d2 == b"\000\000\001\001\002\001\000\000\001\001\002"
 
     for w in 1, 2, 4:
         d0, state0 = pyaudioop.ratecv(datas[w], w, 1, 8000, 16000, None)

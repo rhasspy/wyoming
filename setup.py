@@ -7,7 +7,7 @@ setup(
     name="wyoming",
     version="1.5.0",
     description="Protocol for Rhasspy Voice Assistant",
-    url="http://github.com/rhasspy/rhasspy3",
+    url="http://github.com/rhasspy/wyoming",
     author="Michael Hansen",
     author_email="mike@rhasspy.org",
     license="MIT",

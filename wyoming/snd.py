@@ -17,6 +17,8 @@ _PLAYED_TYPE = "played"
 
 @dataclass
 class Played(Eventable):
+    """Audio has finished playing."""
+
     @staticmethod
     def is_type(event_type: str) -> bool:
         return event_type == _PLAYED_TYPE
@@ -30,6 +32,8 @@ class Played(Eventable):
 
 
 class SndProcessAsyncClient(AsyncClient, contextlib.AbstractAsyncContextManager):
+    """Context manager for sending output audio to an external program."""
+
     def __init__(
         self,
         rate: int,

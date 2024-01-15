@@ -12,14 +12,21 @@ _NOT_RECOGNIZED_TYPE = "not-recognized"
 
 @dataclass
 class Entity:
+    """Named entity with a value."""
+
     name: str
     value: Optional[Any] = None
 
 
 @dataclass
 class Recognize(Eventable):
+    """Request to recognize an event from text."""
+
     text: str
+    """Text with intent in natural language."""
+
     context: Optional[Dict[str, Any]] = None
+    """Context from previous interactions."""
 
     @staticmethod
     def is_type(event_type: str) -> bool:
@@ -39,10 +46,19 @@ class Recognize(Eventable):
 
 @dataclass
 class Intent(Eventable):
+    """Result of successful intent recognition."""
+
     name: str
+    """Name of intent."""
+
     entities: List[Entity] = field(default_factory=list)
+    """Named entities with values."""
+
     text: Optional[str] = None
+    """Human-readable response."""
+
     context: Optional[Dict[str, Any]] = None
+    """Context for next interaction."""
 
     @staticmethod
     def is_type(event_type: str) -> bool:
@@ -96,8 +112,13 @@ class Intent(Eventable):
 
 @dataclass
 class NotRecognized(Eventable):
+    """Result of intent recognition failure."""
+
     text: Optional[str] = None
+    """Human-readable response."""
+
     context: Optional[Dict[str, Any]] = None
+    """Context for next interaction."""
 
     @staticmethod
     def is_type(event_type: str) -> bool:

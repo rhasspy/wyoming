@@ -83,6 +83,8 @@ class NotDetected(Eventable):
 
 
 class WakeProcessAsyncClient(AsyncClient, contextlib.AbstractAsyncContextManager):
+    """Context manager for doing wake word detection with an external program."""
+
     def __init__(
         self,
         rate: int,

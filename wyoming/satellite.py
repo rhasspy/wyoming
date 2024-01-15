@@ -6,6 +6,8 @@ from .event import Event, Eventable
 _RUN_SATELLITE_TYPE = "run-satellite"
 _STREAMING_STARTED_TYPE = "streaming-started"
 _STREAMING_STOPPED_TYPE = "streaming-stopped"
+_SATELLITE_CONNECTED_TYPE = "satellite-connected"
+_SATELLITE_DISCONNECTED_TYPE = "satellite-disconnected"
 
 
 @dataclass
@@ -54,3 +56,35 @@ class StreamingStopped(Eventable):
     @staticmethod
     def from_event(event: Event) -> "StreamingStopped":
         return StreamingStopped()
+
+
+@dataclass
+class SatelliteConnected(Eventable):
+    """Satellite has connected to server."""
+
+    @staticmethod
+    def is_type(event_type: str) -> bool:
+        return event_type == _SATELLITE_CONNECTED_TYPE
+
+    def event(self) -> Event:
+        return Event(type=_SATELLITE_CONNECTED_TYPE)
+
+    @staticmethod
+    def from_event(event: Event) -> "SatelliteConnected":
+        return SatelliteConnected()
+
+
+@dataclass
+class SatelliteDisconnected(Eventable):
+    """Satellite has disconnected from server."""
+
+    @staticmethod
+    def is_type(event_type: str) -> bool:
+        return event_type == _SATELLITE_DISCONNECTED_TYPE
+
+    def event(self) -> Event:
+        return Event(type=_SATELLITE_DISCONNECTED_TYPE)
+
+    @staticmethod
+    def from_event(event: Event) -> "SatelliteDisconnected":
+        return SatelliteDisconnected()

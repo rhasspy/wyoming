@@ -16,6 +16,8 @@ DOMAIN = "mic"
 
 
 class MicProcessAsyncClient(AsyncClient, contextlib.AbstractAsyncContextManager):
+    """Context manager for getting microphone audio from an external program."""
+
     def __init__(
         self,
         rate: int,

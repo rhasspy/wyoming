@@ -55,7 +55,7 @@ class Synthesize(Eventable):
     """Text to synthesize."""
 
     voice: Optional[SynthesizeVoice] = None
-    """Voice to use during synthesis"""
+    """Voice to use during synthesis."""
 
     @staticmethod
     def is_type(event_type: str) -> bool:

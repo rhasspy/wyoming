@@ -1,7 +1,8 @@
-"""Information about available services/artifacts."""
+"""Information about available services, models, etc.."""
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
+from .audio import AudioFormat
 from .event import Event, Eventable
 from .util.dataclasses_json import DataClassJsonMixin
 
@@ -12,6 +13,8 @@ _INFO_TYPE = "info"
 
 @dataclass
 class Describe(Eventable):
+    """Request info message."""
+
     @staticmethod
     def is_type(event_type: str) -> bool:
         return event_type == _DESCRIBE_TYPE
@@ -26,16 +29,30 @@ class Describe(Eventable):
 
 @dataclass
 class Attribution(DataClassJsonMixin):
+    """Attribution for an artifact."""
+
     name: str
+    """Who made it."""
+
     url: str
+    """Where it's from."""
 
 
 @dataclass
 class Artifact(DataClassJsonMixin):
+    """Information about a service, model, etc.."""
+
     name: str
+    """Name/id of artifact."""
+
     attribution: Attribution
+    """Who made the artifact and where it's from."""
+
     installed: bool
+    """True if the artifact is currently installed."""
+
     description: Optional[str]
+    """Human-readable description of the artifact."""
 
 
 # -----------------------------------------------------------------------------
@@ -43,12 +60,18 @@ class Artifact(DataClassJsonMixin):
 
 @dataclass
 class AsrModel(Artifact):
+    """Speech-to-text model."""
+
     languages: List[str]
+    """List of supported model languages."""
 
 
 @dataclass
 class AsrProgram(Artifact):
+    """Speech-to-text service."""
+
     models: List[AsrModel]
+    """List of available models."""
 
 
 # -----------------------------------------------------------------------------
@@ -56,18 +79,29 @@ class AsrProgram(Artifact):
 
 @dataclass
 class TtsVoiceSpeaker(DataClassJsonMixin):
+    """Individual speaker in a multi-speaker voice."""
+
     name: str
+    """Name/id of speaker."""
 
 
 @dataclass
 class TtsVoice(Artifact):
+    """Text-to-speech voice."""
+
     languages: List[str]
+    """List of languages available in the voice."""
+
     speakers: Optional[List[TtsVoiceSpeaker]] = None
+    """List of individual speakers in the voice."""
 
 
 @dataclass
 class TtsProgram(Artifact):
+    """Text-to-speech service."""
+
     voices: List[TtsVoice]
+    """List of available voices."""
 
 
 # -----------------------------------------------------------------------------
@@ -75,12 +109,18 @@ class TtsProgram(Artifact):
 
 @dataclass
 class HandleModel(Artifact):
+    """Intent handling model."""
+
     languages: List[str]
+    """List of supported languages in the model."""
 
 
 @dataclass
 class HandleProgram(Artifact):
+    """Intent handling service."""
+
     models: List[HandleModel]
+    """List of available models."""
 
 
 # -----------------------------------------------------------------------------
@@ -88,12 +128,18 @@ class HandleProgram(Artifact):
 
 @dataclass
 class WakeModel(Artifact):
+    """Wake word detection model."""
+
     languages: List[str]
+    """List of languages supported by the model."""
 
 
 @dataclass
 class WakeProgram(Artifact):
+    """Wake word detection service."""
+
     models: List[WakeModel]
+    """List of available models."""
 
 
 # -----------------------------------------------------------------------------
@@ -101,12 +147,18 @@ class WakeProgram(Artifact):
 
 @dataclass
 class IntentModel(Artifact):
+    """Intent recognition model."""
+
     languages: List[str]
+    """List of languages supported by the model."""
 
 
 @dataclass
 class IntentProgram(Artifact):
+    """Intent recognition service."""
+
     models: List[IntentModel]
+    """List of available models."""
 
 
 # -----------------------------------------------------------------------------
@@ -114,7 +166,13 @@ class IntentProgram(Artifact):
 
 @dataclass
 class Satellite(Artifact):
+    """Satellite information."""
+
     area: Optional[str] = None
+    """Name of the area the satellite is in."""
+
+    snd_format: Optional[AudioFormat] = None
+    """Format of the satellite's audio output."""
 
 
 # -----------------------------------------------------------------------------
@@ -122,12 +180,25 @@ class Satellite(Artifact):
 
 @dataclass
 class Info(Eventable):
+    """Response to describe message with information about available services, models, etc."""
+
     asr: List[AsrProgram] = field(default_factory=list)
+    """Speech-to-text services."""
+
     tts: List[TtsProgram] = field(default_factory=list)
+    """Text-to-speech services."""
+
     handle: List[HandleProgram] = field(default_factory=list)
+    """Intent handling services."""
+
     intent: List[IntentProgram] = field(default_factory=list)
+    """Intent recognition services."""
+
     wake: List[WakeProgram] = field(default_factory=list)
+    """Wake word detection services."""
+
     satellite: Optional[Satellite] = None
+    """Satellite information."""
 
     @staticmethod
     def is_type(event_type: str) -> bool:

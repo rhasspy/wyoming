@@ -13,6 +13,7 @@ except ImportError:
     from . import pyaudioop as audioop  # type: ignore[no-redef]
 
 from .event import Event, Eventable
+from .util.dataclasses_json import DataClassJsonMixin
 
 _CHUNK_TYPE = "audio-chunk"
 _START_TYPE = "audio-start"
@@ -20,7 +21,7 @@ _STOP_TYPE = "audio-stop"
 
 
 @dataclass
-class AudioFormat:
+class AudioFormat(DataClassJsonMixin):
     """Base class for events with audio format information."""
 
     rate: int

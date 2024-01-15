@@ -80,7 +80,7 @@ class AsyncServer(ABC):
         writer: asyncio.StreamWriter,
     ):
         handler = handler_factory(reader, writer)
-        task = asyncio.create_task(handler.run())
+        task = asyncio.create_task(handler.run(), name="wyoming event handler")
         self._tasks.add(task)
         task.add_done_callback(self._tasks.discard)
 

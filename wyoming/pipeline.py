@@ -13,10 +13,19 @@ class PipelineStage(str, Enum):
     """Stages of a pipeline."""
 
     WAKE = "wake"
+    """Wake word detection."""
+
     ASR = "asr"
+    """Speech-to-text (a.k.a. automated speech recognition)."""
+
     INTENT = "intent"
+    """Intent recognition."""
+
     HANDLE = "handle"
+    """Intent handling."""
+
     TTS = "tts"
+    """Text-to-speech."""
 
 
 @dataclass
@@ -24,10 +33,16 @@ class RunPipeline(Eventable):
     """Run a pipeline"""
 
     start_stage: PipelineStage
+    """Stage to start the pipeline on."""
+
     end_stage: PipelineStage
+    """Stage to end the pipeline on."""
 
     name: Optional[str] = None
     """Name of pipeline to run"""
+
+    restart_on_end: bool = False
+    """True if pipeline should restart automatically after ending."""
 
     snd_format: Optional[AudioFormat] = None
     """Desired format for audio output."""
@@ -86,6 +101,7 @@ class RunPipeline(Eventable):
         data: Dict[str, Any] = {
             "start_stage": self.start_stage.value,
             "end_stage": self.end_stage.value,
+            "restart_on_end": self.restart_on_end,
         }
 
         if self.name is not None:
@@ -109,6 +125,7 @@ class RunPipeline(Eventable):
             start_stage=PipelineStage(event.data["start_stage"]),
             end_stage=PipelineStage(event.data["end_stage"]),
             name=event.data.get("name"),
+            restart_on_end=event.data.get("restart_on_end", False),
             snd_format=AudioFormat(
                 rate=snd_format["rate"],
                 width=snd_format["width"],

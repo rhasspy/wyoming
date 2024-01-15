@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name="wyoming",
-    version="1.4.2",
+    version="1.5.0",
     description="Protocol for Rhasspy Voice Assistant",
     url="http://github.com/rhasspy/rhasspy3",
     author="Michael Hansen",

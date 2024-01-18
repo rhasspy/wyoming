@@ -6,13 +6,15 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, BinaryIO, Dict, Iterable, Optional
 
+from .version import __version__
+
 _TYPE = "type"
 _DATA = "data"
 _DATA_LENGTH = "data_length"
 _PAYLOAD_LENGTH = "payload_length"
 _NEWLINE = "\n".encode()
 _VERSION = "version"
-_VERSION_NUMBER = "1.2"
+_VERSION_NUMBER = __version__
 
 
 @dataclass

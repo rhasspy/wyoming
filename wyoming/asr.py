@@ -16,6 +16,9 @@ class Transcript(Eventable):
     text: str
     """Text transcription of spoken audio"""
 
+    context: Optional[Dict[str, Any]] = None
+    """Context for next interaction."""
+
     @staticmethod
     def is_type(event_type: str) -> bool:
         return event_type == _TRANSCRIPT_TYPE
@@ -41,6 +44,9 @@ class Transcribe(Eventable):
 
     language: Optional[str] = None
     """Language of spoken audio to follow"""
+
+    context: Optional[Dict[str, Any]] = None
+    """Context from previous interactions."""
 
     @staticmethod
     def is_type(event_type: str) -> bool:

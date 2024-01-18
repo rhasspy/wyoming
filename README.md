@@ -12,14 +12,23 @@ Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and the [Home Assistant]
 
 ## Wyoming Projects
 
-* [Satellite](https://github.com/rhasspy/wyoming-satellite) for Home Assistant 
-* [Piper](https://github.com/rhasspy/wyoming-piper) text to speech
-* [Faster Whisper](https://github.com/rhasspy/wyoming-faster-whisper) speech to text
-* [openWakeWord](https://github.com/rhasspy/wyoming-openwakeword) wake word detection
-* [porcupine1](https://github.com/rhasspy/wyoming-porcupine1) wake word detection
-* [snowboy](https://github.com/rhasspy/wyoming-snowboy) wake word detection
-* [mic-external](https://github.com/rhasspy/wyoming-mic-external)
-* [snd-external](https://github.com/rhasspy/wyoming-snd-external)
+* Voice satellites
+    * [Satellite](https://github.com/rhasspy/wyoming-satellite) for Home Assistant 
+* Audio input/output
+    * [mic-external](https://github.com/rhasspy/wyoming-mic-external)
+    * [snd-external](https://github.com/rhasspy/wyoming-snd-external)
+    * [SDL2](https://github.com/rhasspy/wyoming-sdl2)
+* Wake word detection
+    * [openWakeWord](https://github.com/rhasspy/wyoming-openwakeword)
+    * [porcupine1](https://github.com/rhasspy/wyoming-porcupine1)
+    * [snowboy](https://github.com/rhasspy/wyoming-snowboy)
+* Speech-to-text
+    * [Faster Whisper](https://github.com/rhasspy/wyoming-faster-whisper)
+    * [Vosk](https://github.com/rhasspy/wyoming-vosk)
+* Text-to-speech
+    * [Piper](https://github.com/rhasspy/wyoming-piper)
+* Intent handling
+    * [handle-external](https://github.com/rhasspy/wyoming-handle-external)
 
 ## Format
 
@@ -77,6 +86,7 @@ Describe available services.
                 * `url` - URL of creator (required)
             * `installed` - true if currently installed (bool, required)
             * `description` - human-readable description (string, optional)
+            * `version` - version of the model (string, optional)
     * `tts` - list text to speech services (optional)
         * `models` - list of available models
             * `name` - unique name (required)
@@ -88,6 +98,7 @@ Describe available services.
                 * `url` - URL of creator (required)
             * `installed` - true if currently installed (bool, required)
             * `description` - human-readable description (string, optional)
+            * `version` - version of the model (string, optional)
     * `wake` - list wake word detection services( optional )
         * `models` - list of available models (required)
             * `name` - unique name (required)
@@ -97,6 +108,7 @@ Describe available services.
                 * `url` - URL of creator (required)
             * `installed` - true if currently installed (bool, required)
             * `description` - human-readable description (string, optional)
+            * `version` - version of the model (string, optional)
     * `handle` - list intent handling services (optional)
         * `models` - list of available models (required)
             * `name` - unique name (required)
@@ -106,6 +118,7 @@ Describe available services.
                 * `url` - URL of creator (required)
             * `installed` - true if currently installed (bool, required)
             * `description` - human-readable description (string, optional)
+            * `version` - version of the model (string, optional)
     * `intent` - list intent recognition services (optional)
         * `models` - list of available models (required)
             * `name` - unique name (required)
@@ -115,6 +128,13 @@ Describe available services.
                 * `url` - URL of creator (required)
             * `installed` - true if currently installed (bool, required)
             * `description` - human-readable description (string, optional)
+            * `version` - version of the model (string, optional)
+    * `satellite` - information about voice satellite (optional)
+        * `area` - name of area where satellite is located (string, optional)
+        * `snd_format` - optimal audio output format of satellite (optional)
+            * `rate` - sample rate in hertz (int, required)
+            * `width` - sample width in bytes (int, required)
+            * `channels` - number of channels (int, required)
     
 ### Speech Recognition
 
@@ -123,8 +143,10 @@ Transcribe audio into text.
 * `transcribe` - request to transcribe an audio stream
     * `name` - name of model to use (string, optional)
     * `language` - language of spoken audio (string, optional)
+    * `context` - context from previous interactions (object, optional)
 * `transcript` - response with transcription
     * `text` - text transcription of spoken audio (string, required)
+    * `context` - context for next interaction (object, optional)
 
 ### Text to Speech
 
@@ -163,14 +185,17 @@ Recognizes intents from text.
 
 * `recognize` - request to recognize an intent from text
     * `text` - text to recognize (string, required)
+    * `context` - context from previous interactions (object, optional)
 * `intent` - response with recognized intent
     * `name` - name of intent (string, required)
     * `entities` - list of entities (optional)
         * `name` - name of entity (string, required)
         * `value` - value of entity (any, optional)
     * `text` - response for user (string, optional)
+    * `context` - context for next interactions (object, optional)
 * `not-recognized` - response indicating no intent was recognized
     * `text` - response for user (string, optional)
+    * `context` - context for next interactions (object, optional)
 
 ### Intent Handling
 
@@ -178,8 +203,10 @@ Handle structured intents or text directly.
 
 * `handled` - response when intent was successfully handled
     * `text` - response for user (string, optional)
+    * `context` - context for next interactions (object, optional)
 * `not-handled` - response when intent was not handled
     * `text` - response for user (string, optional)
+    * `context` - context for next interactions (object, optional)
 
 ### Audio Output
 

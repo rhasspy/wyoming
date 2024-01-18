@@ -5,6 +5,7 @@ from typing import Iterable
 
 import pytest
 
+from wyoming import __version__ as wyoming_version
 from wyoming.event import (
     Event,
     async_read_event,
@@ -12,6 +13,7 @@ from wyoming.event import (
     read_event,
     write_event,
 )
+from wyoming.info import Satellite, Attribution
 
 PAYLOAD = b"test\npayload"
 DATA = {"test": "data"}
@@ -69,7 +71,7 @@ def test_write_event() -> None:
         # avoid overflowing a line buffer.
         assert json.loads(reader.readline()) == {
             "type": event.type,
-            "version": "1.2",
+            "version": wyoming_version,
             "data_length": len(DATA_BYTES),
             "payload_length": len(PAYLOAD),
         }
@@ -100,7 +102,7 @@ async def test_async_write_event() -> None:
         # avoid overflowing a line buffer.
         assert json.loads(reader.readline()) == {
             "type": event.type,
-            "version": "1.2",
+            "version": wyoming_version,
             "data_length": len(DATA_BYTES),
             "payload_length": len(PAYLOAD),
         }
@@ -127,7 +129,7 @@ def test_write_event_no_payload() -> None:
     with io.BytesIO(event_bytes) as reader:
         assert json.loads(reader.readline()) == {
             "type": event.type,
-            "version": "1.2",
+            "version": wyoming_version,
             "data_length": len(DATA_BYTES),
         }
 
@@ -148,7 +150,7 @@ async def test_async_write_event_no_payload() -> None:
     with io.BytesIO(event_bytes) as reader:
         assert json.loads(reader.readline()) == {
             "type": event.type,
-            "version": "1.2",
+            "version": wyoming_version,
             "data_length": len(DATA_BYTES),
         }
 
@@ -162,7 +164,7 @@ def test_read_event() -> None:
     """Test synchronous event reading."""
     header = {
         "type": "test-event",
-        "version": "1.2",
+        "version": wyoming_version,
         "data_length": len(DATA_BYTES),
         "payload_length": len(PAYLOAD),
         # inline data
@@ -202,7 +204,7 @@ async def test_async_read_event() -> None:
     """Test asynchronous event reading."""
     header = {
         "type": "test-event",
-        "version": "1.2",
+        "version": wyoming_version,
         "data_length": len(DATA_BYTES),
         "payload_length": len(PAYLOAD),
         # inline data

@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
+from pathlib import Path
 from setuptools import setup
+
+_DIR = Path(__file__).parent
+_MODULE_DIR = _DIR / "wyoming"
+_VERSION = (_MODULE_DIR / "VERSION").read_text(encoding="utf-8").strip()
 
 # -----------------------------------------------------------------------------
 
 setup(
     name="wyoming",
-    version="1.5.0",
+    version=_VERSION,
     description="Protocol for Rhasspy Voice Assistant",
     url="http://github.com/rhasspy/wyoming",
     author="Michael Hansen",

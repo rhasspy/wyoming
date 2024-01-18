@@ -54,6 +54,9 @@ class Artifact(DataClassJsonMixin):
     description: Optional[str]
     """Human-readable description of the artifact."""
 
+    version: Optional[str]
+    """Version of the artifact."""
+
 
 # -----------------------------------------------------------------------------
 

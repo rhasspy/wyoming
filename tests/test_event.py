@@ -13,7 +13,6 @@ from wyoming.event import (
     read_event,
     write_event,
 )
-from wyoming.info import Satellite, Attribution
 
 PAYLOAD = b"test\npayload"
 DATA = {"test": "data"}

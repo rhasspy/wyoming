@@ -214,6 +214,17 @@ Play audio stream.
 
 * `played` - response when audio finishes playing
 
+### Voice Satellite
+
+Control of one or more remote voice satellites connected to a central server.
+
+* `run-satellite` - informs satellite that server is ready to run pipelines
+* `pause-satellite` - informs satellite that server is not ready anymore to run pipelines
+* `satellite-connected` - satellite has connected to the server
+* `satellite-disconnected` - satellite has been disconnected from the server
+* `streaming-started` - satellite has started streaming audio to the server
+* `streaming-stopped` - satellite has stopped streaming audio to the server
+
 
 ## Event Flow
 

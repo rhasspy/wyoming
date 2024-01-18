@@ -4,6 +4,7 @@
 
 - Add `version` to info artifacts
 - Use Python package version in Wyoming JSON header
+- Add `pause-satellite` message
 
 ## 1.5.0
 

@@ -48,7 +48,7 @@ Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and [Home Assistant](htt
     * Immediately follows additional data or header `\n` if no additional data
 
 
-## Events Types
+## Event Types
 
 Available events with `type` and fields.
 

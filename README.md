@@ -8,7 +8,7 @@ A peer-to-peer protocol for voice assistants (basically [JSONL](https://jsonline
 <payload_length bytes (optional)>
 ```
 
-Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and the [Home Assistant](https://www.home-assistant.io/integrations/wyoming) for communication with voice services.
+Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and [Home Assistant](https://www.home-assistant.io/integrations/wyoming) for communication with voice services.
 
 ## Wyoming Projects
 

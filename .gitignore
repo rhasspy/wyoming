@@ -13,6 +13,7 @@ htmlcov
 venv/
 .mypy_cache/
 *.egg-info/
+.tox/
 
 /local/
 /dist/

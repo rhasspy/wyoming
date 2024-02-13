@@ -3,7 +3,7 @@ import sys
 from abc import ABC, abstractmethod
 from functools import partial
 from pathlib import Path
-from typing import Callable, Set, Union
+from typing import Callable, Dict, Optional, Union
 from urllib.parse import urlparse
 
 from .event import Event, async_get_stdin, async_read_event, async_write_event
@@ -17,6 +17,7 @@ class AsyncEventHandler(ABC):
     ) -> None:
         self.reader = reader
         self.writer = writer
+        self._is_running = False
 
     @abstractmethod
     async def handle_event(self, event: Event) -> bool:
@@ -26,8 +27,10 @@ class AsyncEventHandler(ABC):
         await async_write_event(event, self.writer)
 
     async def run(self) -> None:
+        self._is_running = True
+
         try:
-            while True:
+            while self._is_running:
                 event = await async_read_event(self.reader)
                 if event is None:
                     break
@@ -40,6 +43,11 @@ class AsyncEventHandler(ABC):
     async def disconnect(self) -> None:
         pass
 
+    async def stop(self) -> None:
+        self._is_running = False
+        self.writer.close()
+        self.reader.feed_eof()
+
 
 HandlerFactory = Callable[
     [asyncio.StreamReader, asyncio.StreamWriter], AsyncEventHandler
@@ -50,7 +58,7 @@ class AsyncServer(ABC):
     """Base class for async Wyoming server."""
 
     def __init__(self) -> None:
-        self._tasks: Set[asyncio.Task] = set()
+        self._handlers: Dict[asyncio.Task, AsyncEventHandler] = {}
 
     @abstractmethod
     async def run(self, handler_factory: HandlerFactory) -> None:
@@ -82,8 +90,16 @@ class AsyncServer(ABC):
     ):
         handler = handler_factory(reader, writer)
         task = asyncio.create_task(handler.run(), name="wyoming event handler")
-        self._tasks.add(task)
-        task.add_done_callback(self._tasks.discard)
+        self._handlers[task] = handler
+        task.add_done_callback(lambda t: self._handlers.pop(t, None))
+
+    async def start(self, handler_factory: HandlerFactory) -> None:
+        """Start server without blocking."""
+        pass
+
+    async def stop(self) -> None:
+        """Stop all handlers."""
+        await asyncio.gather(*(h.stop() for h in self._handlers.values()))
 
 
 class AsyncStdioServer(AsyncServer):
@@ -117,14 +133,29 @@ class AsyncTcpServer(AsyncServer):
         super().__init__()
         self.host = host
         self.port = port
+        self._server: Optional[asyncio.AbstractServer] = None
 
     async def run(self, handler_factory: HandlerFactory) -> None:
         handler_callback = partial(self._handler_callback, handler_factory)
-        server = await asyncio.start_server(
+        self._server = await asyncio.start_server(
             handler_callback, host=self.host, port=self.port
         )
 
-        await server.serve_forever()
+        await self._server.serve_forever()
+
+    async def start(self, handler_factory: HandlerFactory) -> None:
+        handler_callback = partial(self._handler_callback, handler_factory)
+        self._server = await asyncio.start_server(
+            handler_callback, host=self.host, port=self.port
+        )
+
+        await self._server.start_serving()
+
+    async def stop(self) -> None:
+        await super().stop()
+
+        if self._server is not None:
+            self._server.close()
 
 
 class AsyncUnixServer(AsyncServer):
@@ -133,18 +164,38 @@ class AsyncUnixServer(AsyncServer):
     def __init__(self, socket_path: Union[str, Path]) -> None:
         super().__init__()
         self.socket_path = Path(socket_path)
+        self._server: Optional[asyncio.AbstractServer] = None
 
     async def run(self, handler_factory: HandlerFactory) -> None:
         # Need to unlink socket file if it exists
         self.socket_path.unlink(missing_ok=True)
 
         handler_callback = partial(self._handler_callback, handler_factory)
-        server = await asyncio.start_unix_server(
+        self._server = await asyncio.start_unix_server(
             handler_callback, path=self.socket_path
         )
 
         try:
-            await server.serve_forever()
+            await self._server.serve_forever()
         finally:
             # Unlink when we're done
             self.socket_path.unlink(missing_ok=True)
+
+    async def start(self, handler_factory: HandlerFactory) -> None:
+        # Need to unlink socket file if it exists
+        self.socket_path.unlink(missing_ok=True)
+
+        handler_callback = partial(self._handler_callback, handler_factory)
+        self._server = await asyncio.start_unix_server(
+            handler_callback, path=self.socket_path
+        )
+
+        await self._server.start_serving()
+
+    async def stop(self) -> None:
+        await super().stop()
+
+        if self._server is not None:
+            self._server.close()
+
+        self.socket_path.unlink(missing_ok=True)

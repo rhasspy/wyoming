@@ -42,9 +42,10 @@ class AsyncClient(ABC):
             return AsyncUnixClient(result.path)
 
         if result.scheme == "tcp":
-            host, port_str = result.netloc.split(":")
-            port = int(port_str)
-            return AsyncTcpClient(host, port)
+            if (result.hostname is None) or (result.port is None):
+                raise ValueError("A port must be specified when using a 'tcp://' URI")
+
+            return AsyncTcpClient(result.hostname, result.port)
 
         if result.scheme == "stdio":
             return AsyncStdioClient()
@@ -90,7 +91,7 @@ class AsyncUnixClient(AsyncClient):
     def __init__(self, socket_path: Union[str, Path]) -> None:
         super().__init__()
 
-        self.socket_path = socket_path
+        self.socket_path = Path(socket_path)
 
     async def connect(self) -> None:
         self._reader, self._writer = await asyncio.open_unix_connection(

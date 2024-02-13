@@ -64,8 +64,9 @@ class AsyncServer(ABC):
             return AsyncUnixServer(result.path)
 
         if result.scheme == "tcp":
-            if result.port is not None:
+            if (result.hostname is None) or (result.port is None):
                 raise ValueError("A port must be specified when using a 'tcp://' URI")
+
             return AsyncTcpServer(result.hostname, result.port)
 
         if result.scheme == "stdio":

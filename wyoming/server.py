@@ -21,12 +21,15 @@ class AsyncEventHandler(ABC):
 
     @abstractmethod
     async def handle_event(self, event: Event) -> bool:
+        """Handle an event. Returning false will disconnect the client."""
         return True
 
     async def write_event(self, event: Event) -> None:
+        """Send an event to the client."""
         await async_write_event(event, self.writer)
 
     async def run(self) -> None:
+        """Receive events until stopped or handle_event returns false."""
         self._is_running = True
 
         try:
@@ -41,9 +44,10 @@ class AsyncEventHandler(ABC):
             await self.disconnect()
 
     async def disconnect(self) -> None:
-        pass
+        """Called when client disconnects."""
 
     async def stop(self) -> None:
+        """Try to stop the event handler."""
         self._is_running = False
         self.writer.close()
         self.reader.feed_eof()
@@ -62,10 +66,11 @@ class AsyncServer(ABC):
 
     @abstractmethod
     async def run(self, handler_factory: HandlerFactory) -> None:
-        pass
+        """Start server and block while running."""
 
     @staticmethod
     def from_uri(uri: str) -> "AsyncServer":
+        """Create server from URI."""
         result = urlparse(uri)
 
         if result.scheme == "unix":
@@ -95,10 +100,9 @@ class AsyncServer(ABC):
 
     async def start(self, handler_factory: HandlerFactory) -> None:
         """Start server without blocking."""
-        pass
 
     async def stop(self) -> None:
-        """Stop all handlers."""
+        """Try to stop all event handlers."""
         await asyncio.gather(*(h.stop() for h in self._handlers.values()))
 
 
@@ -106,6 +110,7 @@ class AsyncStdioServer(AsyncServer):
     """Wyoming server over stdin/stdout."""
 
     async def run(self, handler_factory: HandlerFactory) -> None:
+        """Start server and block while running."""
         reader = await async_get_stdin()
 
         # Get stdout writer.
@@ -144,6 +149,7 @@ class AsyncTcpServer(AsyncServer):
         await self._server.serve_forever()
 
     async def start(self, handler_factory: HandlerFactory) -> None:
+        """Start server without blocking."""
         handler_callback = partial(self._handler_callback, handler_factory)
         self._server = await asyncio.start_server(
             handler_callback, host=self.host, port=self.port
@@ -152,6 +158,7 @@ class AsyncTcpServer(AsyncServer):
         await self._server.start_serving()
 
     async def stop(self) -> None:
+        """Try to stop all event handlers."""
         await super().stop()
 
         if self._server is not None:
@@ -167,6 +174,7 @@ class AsyncUnixServer(AsyncServer):
         self._server: Optional[asyncio.AbstractServer] = None
 
     async def run(self, handler_factory: HandlerFactory) -> None:
+        """Start server and block while running."""
         # Need to unlink socket file if it exists
         self.socket_path.unlink(missing_ok=True)
 
@@ -182,6 +190,7 @@ class AsyncUnixServer(AsyncServer):
             self.socket_path.unlink(missing_ok=True)
 
     async def start(self, handler_factory: HandlerFactory) -> None:
+        """Start server without blocking."""
         # Need to unlink socket file if it exists
         self.socket_path.unlink(missing_ok=True)
 
@@ -193,6 +202,7 @@ class AsyncUnixServer(AsyncServer):
         await self._server.start_serving()
 
     async def stop(self) -> None:
+        """Try to stop all event handlers."""
         await super().stop()
 
         if self._server is not None:

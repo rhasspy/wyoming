@@ -4,7 +4,7 @@ import io
 import sys
 import wave
 from dataclasses import dataclass
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
 
 try:
     # Use built-in audioop until it's removed in Python 3.13
@@ -201,12 +201,20 @@ class AudioChunkConverter:
 
 
 def wav_to_chunks(
-    wav_file: wave.Wave_read, samples_per_chunk: int, timestamp: int = 0
-) -> Iterable[AudioChunk]:
+    wav_file: wave.Wave_read,
+    samples_per_chunk: int,
+    timestamp: int = 0,
+    start_event: bool = False,
+    stop_event: bool = False,
+) -> Iterable[Union[AudioStart, AudioChunk, AudioStop]]:
     """Splits WAV file into AudioChunks."""
     rate = wav_file.getframerate()
     width = wav_file.getsampwidth()
     channels = wav_file.getnchannels()
+
+    if start_event:
+        yield AudioStart(rate=rate, width=width, channels=channels, timestamp=0)
+
     audio_bytes = wav_file.readframes(samples_per_chunk)
     while audio_bytes:
         chunk = AudioChunk(
@@ -219,6 +227,9 @@ def wav_to_chunks(
         yield chunk
         timestamp += chunk.milliseconds
         audio_bytes = wav_file.readframes(samples_per_chunk)
+
+    if stop_event:
+        yield AudioStop(timestamp=timestamp)
 
 
 # -----------------------------------------------------------------------------

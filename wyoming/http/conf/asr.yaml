@@ -1,0 +1,50 @@
+---
+openapi: "3.0.0"
+info:
+  title: 'Wyoming ASR'
+  version: '1.0.0'
+  description: 'API for Automated Speech Recognition'
+paths:
+  /api/info:
+    get:
+      summary: 'Get service information'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+  /api/speech-to-text:
+    post:
+      summary: 'Transcribe WAV data to text'
+      requestBody:
+        description: 'WAV data (16-bit 16Khz mono preferred)'
+        required: true
+        content:
+          audio/wav:
+            schema:
+              type: string
+              format: binary
+      parameters:
+        - in: query
+          name: uri
+          description: 'URI of Wyoming ASR service'
+          schema:
+            type: string
+        - in: query
+          name: model
+          description: 'Name of model to use for transcription'
+          schema:
+            type: string
+        - in: query
+          name: language
+          description: 'Language to use for transcription'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object

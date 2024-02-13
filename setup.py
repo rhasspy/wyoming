@@ -32,5 +32,8 @@ setup(
         "Programming Language :: Python :: 3.12",
     ],
     keywords="voice assistant rhasspy",
-    extras_require={"zeroconf": ["zeroconf==0.88.0"]},
+    extras_require={
+        "zeroconf": ["zeroconf==0.88.0"],
+        "http": ["Flask==3.0.2", "swagger-ui-py==23.9.23"],
+    },
 )

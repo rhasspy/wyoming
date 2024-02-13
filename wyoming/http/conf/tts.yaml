@@ -1,0 +1,82 @@
+---
+openapi: "3.0.0"
+info:
+  title: 'Wyoming TTS'
+  version: '1.0.0'
+  description: 'API for Text to Speech'
+paths:
+  /api/info:
+    get:
+      summary: 'Get service information'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+  /api/text-to-speech:
+    post:
+      summary: 'Synthesize speech from text'
+      requestBody:
+        description: 'Text to speak'
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+      parameters:
+        - in: query
+          name: uri
+          description: 'URI of Wyoming TTS service'
+          schema:
+            type: string
+        - in: query
+          name: voice
+          description: 'Name of voice to use for synthesis'
+          schema:
+            type: string
+        - in: query
+          name: speaker
+          description: 'Name of voice speaker to use for synthesis'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            audio/wav:
+              schema:
+                type: string
+                format: binary
+    get:
+      summary: 'Synthesize speech from text'
+      parameters:
+        - in: query
+          name: text
+          description: 'Text to speak'
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: uri
+          description: 'URI of Wyoming TTS service'
+          schema:
+            type: string
+        - in: query
+          name: voice
+          description: 'Name of voice to use for synthesis'
+          schema:
+            type: string
+        - in: query
+          name: speaker
+          description: 'Name of voice speaker to use for synthesis'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            audio/wav:
+              schema:
+                type: string
+                format: binary

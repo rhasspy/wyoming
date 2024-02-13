@@ -31,8 +31,15 @@ class AsyncClient(ABC):
     async def connect(self) -> None:
         pass
 
+    async def __aenter__(self):
+        await self.connect()
+        return self
+
     async def disconnect(self) -> None:
         pass
+
+    async def __aexit__(self, exc_type, exc_value, traceback):
+        await self.disconnect()
 
     @staticmethod
     def from_uri(uri: str) -> "AsyncClient":
@@ -68,10 +75,6 @@ class AsyncTcpClient(AsyncClient):
             port=self.port,
         )
 
-    async def __aenter__(self):
-        await self.connect()
-        return self
-
     async def disconnect(self) -> None:
         writer = self._writer
         self._reader = None
@@ -80,9 +83,6 @@ class AsyncTcpClient(AsyncClient):
         if writer is not None:
             writer.close()
             await writer.wait_closed()
-
-    async def __aexit__(self, exc_type, exc_value, traceback):
-        await self.disconnect()
 
 
 class AsyncUnixClient(AsyncClient):
@@ -98,10 +98,6 @@ class AsyncUnixClient(AsyncClient):
             path=self.socket_path
         )
 
-    async def __aenter__(self):
-        await self.connect()
-        return self
-
     async def disconnect(self) -> None:
         writer = self._writer
         self._reader = None
@@ -110,9 +106,6 @@ class AsyncUnixClient(AsyncClient):
         if writer is not None:
             writer.close()
             await writer.wait_closed()
-
-    async def __aexit__(self, exc_type, exc_value, traceback):
-        await self.disconnect()
 
 
 class AsyncStdioClient(AsyncClient):

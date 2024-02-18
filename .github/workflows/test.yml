@@ -1,8 +1,13 @@
 name: test
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [master]
+
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   test_linux:
@@ -12,15 +17,11 @@ jobs:
       matrix:
         python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/setup-python@v5
         with:
           python-version: "${{ matrix.python_version }}"
           cache: "pip"
-      - name: setup
-        run: |
-          script/setup --dev
-      - name: test
-        run: |
-          script/lint
-          script/test
+      - run: script/setup --dev
+      - run: script/lint
+      - run: script/test

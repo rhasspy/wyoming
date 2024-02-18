@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.3
+
+- Add `phrase` to wake word model info
+- Add tests to CI
+
+## 1.5.2
+
+- Fix missing VERSION file
+
 ## 1.5.1
 
 - Add `version` to info artifacts

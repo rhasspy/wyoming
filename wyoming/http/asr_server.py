@@ -1,4 +1,5 @@
 """HTTP server for automated speech recognition (ASR)."""
+
 import argparse
 import io
 import wave
@@ -10,6 +11,7 @@ from swagger_ui import flask_api_doc  # pylint: disable=no-name-in-module
 from wyoming.asr import Transcribe, Transcript
 from wyoming.audio import wav_to_chunks
 from wyoming.client import AsyncClient
+from wyoming.error import Error
 from wyoming.info import Describe, Info
 
 _DIR = Path(__file__).parent
@@ -65,6 +67,12 @@ def main():
                 if Transcript.is_type(event.type):
                     transcript = Transcript.from_event(event)
                     return jsonify(transcript.to_dict())
+
+                if Error.is_type(event.type):
+                    error = Error.from_event(event)
+                    raise RuntimeError(
+                        f"Unexpected error from client: code={error.code}, text={error.text}"
+                    )
 
     @app.route("/api/info", methods=["GET"])
     async def api_info():

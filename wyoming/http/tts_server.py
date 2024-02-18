@@ -10,6 +10,7 @@ from swagger_ui import flask_api_doc  # pylint: disable=no-name-in-module
 
 from wyoming.audio import AudioChunk, AudioStart, AudioStop
 from wyoming.client import AsyncClient
+from wyoming.error import Error
 from wyoming.info import Describe, Info
 from wyoming.tts import Synthesize, SynthesizeVoice
 
@@ -77,6 +78,11 @@ def main():
                     return Response(
                         wav_io.getvalue(), headers={"Content-Type": "audio/wav"}
                     )
+                elif Error.is_type(event.type):
+                    error = Error.from_event(event)
+                    raise RuntimeError(
+                        f"Unexpected error from client: code={error.code}, text={error.text}"
+                    )
 
     @app.route("/api/info", methods=["GET"])
     async def api_info():
@@ -95,6 +101,11 @@ def main():
                 if Info.is_type(event.type):
                     info = Info.from_event(event)
                     return jsonify(info.to_dict())
+
+    @app.errorhandler(Exception)
+    async def handle_error(err):
+        """Return error as text."""
+        return (f"{err.__class__.__name__}: {err}", 500)
 
     flask_api_doc(app, config_path=str(CONF_PATH), url_prefix="/api", title="API doc")
     app.run(args.host, args.port)

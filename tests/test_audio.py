@@ -40,6 +40,7 @@ def test_wav_to_chunks() -> None:
         chunks = list(wav_to_chunks(wav_read, samples_per_chunk=1000))
         assert len(chunks) == 16
         for chunk in chunks:
+            assert isinstance(chunk, AudioChunk)
             assert chunk.rate == 16000
             assert chunk.width == 2
             assert chunk.channels == 1

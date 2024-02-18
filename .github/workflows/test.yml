@@ -22,6 +22,7 @@ jobs:
         with:
           python-version: "${{ matrix.python_version }}"
           cache: "pip"
+          cache-dependency-path: setup.py
       - run: script/setup --dev
       - run: script/lint
       - run: script/test

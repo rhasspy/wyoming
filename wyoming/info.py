@@ -136,6 +136,9 @@ class WakeModel(Artifact):
     languages: List[str]
     """List of languages supported by the model."""
 
+    phrase: Optional[str]
+    """Wake up phrase used by the model."""
+
 
 @dataclass
 class WakeProgram(Artifact):

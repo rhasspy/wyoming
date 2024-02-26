@@ -1,0 +1,40 @@
+---
+openapi: "3.0.0"
+info:
+  title: 'Wyoming Wake'
+  version: '1.0.0'
+  description: 'API for Wake Word Detection'
+paths:
+  /api/info:
+    get:
+      summary: 'Get service information'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+  /api/detect-wake-word:
+    post:
+      summary: 'Transcribe WAV data to text'
+      requestBody:
+        description: 'WAV data (16-bit 16Khz mono preferred)'
+        required: true
+        content:
+          audio/wav:
+            schema:
+              type: string
+              format: binary
+      parameters:
+        - in: query
+          name: uri
+          description: 'URI of Wyoming ASR service'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object

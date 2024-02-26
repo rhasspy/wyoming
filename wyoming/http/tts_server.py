@@ -1,37 +1,31 @@
 """HTTP server for text to speech (TTS)."""
-import argparse
 import io
+import logging
 import wave
 from pathlib import Path
 from typing import Optional
 
-from flask import Flask, Response, jsonify, redirect, request
-from swagger_ui import flask_api_doc  # pylint: disable=no-name-in-module
+from flask import Response, request
 
 from wyoming.audio import AudioChunk, AudioStart, AudioStop
 from wyoming.client import AsyncClient
 from wyoming.error import Error
-from wyoming.info import Describe, Info
 from wyoming.tts import Synthesize, SynthesizeVoice
+
+from .shared import get_app, get_argument_parser
 
 _DIR = Path(__file__).parent
 CONF_PATH = _DIR / "conf" / "tts.yaml"
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--host", default="0.0.0.0")
-    parser.add_argument("--port", type=int, default=5000)
-    parser.add_argument("--uri", help="URI of Wyoming ASR service")
+    parser = get_argument_parser()
     parser.add_argument("--voice", help="Default voice for synthesis")
     parser.add_argument("--speaker", help="Default voice speaker for synthesis")
     args = parser.parse_args()
+    logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
 
-    app = Flask("tts")
-
-    @app.route("/")
-    def redirect_to_api():
-        return redirect("/api")
+    app = get_app("tts", CONF_PATH, args)
 
     @app.route("/api/text-to-speech", methods=["POST", "GET"])
     async def api_stt() -> Response:
@@ -84,30 +78,6 @@ def main():
                         f"Unexpected error from client: code={error.code}, text={error.text}"
                     )
 
-    @app.route("/api/info", methods=["GET"])
-    async def api_info():
-        uri = request.args.get("uri", args.uri)
-        if not uri:
-            raise ValueError("URI is required")
-
-        async with AsyncClient.from_uri(uri) as client:
-            await client.write_event(Describe().event())
-
-            while True:
-                event = await client.read_event()
-                if event is None:
-                    raise RuntimeError("Client disconnected")
-
-                if Info.is_type(event.type):
-                    info = Info.from_event(event)
-                    return jsonify(info.to_dict())
-
-    @app.errorhandler(Exception)
-    async def handle_error(err):
-        """Return error as text."""
-        return (f"{err.__class__.__name__}: {err}", 500)
-
-    flask_api_doc(app, config_path=str(CONF_PATH), url_prefix="/api", title="API doc")
     app.run(args.host, args.port)
 
 

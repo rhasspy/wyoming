@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.4
+
+- Add `speaker` field to `detect` event
+- Refactor HTTP servers
+
 ## 1.5.3
 
 - Add `phrase` to wake word model info

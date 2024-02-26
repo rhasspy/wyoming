@@ -28,19 +28,31 @@ class Detection(Eventable):
     timestamp: Optional[int] = None
     """Timestamp of audio chunk with detection"""
 
+    speaker: Optional[str] = None
+    """Name of speaker."""
+
     @staticmethod
     def is_type(event_type: str) -> bool:
         return event_type == _DETECTION_TYPE
 
     def event(self) -> Event:
         return Event(
-            type=_DETECTION_TYPE, data={"name": self.name, "timestamp": self.timestamp}
+            type=_DETECTION_TYPE,
+            data={
+                "name": self.name,
+                "timestamp": self.timestamp,
+                "speaker": self.speaker,
+            },
         )
 
     @staticmethod
     def from_event(event: Event) -> "Detection":
         data = event.data or {}
-        return Detection(name=data.get("name"), timestamp=data.get("timestamp"))
+        return Detection(
+            name=data.get("name"),
+            timestamp=data.get("timestamp"),
+            speaker=data.get("speaker"),
+        )
 
 
 @dataclass

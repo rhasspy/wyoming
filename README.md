@@ -25,6 +25,7 @@ Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and [Home Assistant](htt
 * Speech-to-text
     * [Faster Whisper](https://github.com/rhasspy/wyoming-faster-whisper)
     * [Vosk](https://github.com/rhasspy/wyoming-vosk)
+    * [Whisper.cpp](https://github.com/rhasspy/wyoming-whisper-cpp)
 * Text-to-speech
     * [Piper](https://github.com/rhasspy/wyoming-piper)
 * Intent handling

@@ -1,7 +1,9 @@
 """Satellite events."""
 from dataclasses import dataclass
+from typing import Any, Dict, Optional
 
 from .event import Event, Eventable
+from .pipeline import PipelineStage
 
 _RUN_SATELLITE_TYPE = "run-satellite"
 _PAUSE_SATELLITE_TYPE = "pause-satellite"
@@ -15,16 +17,28 @@ _SATELLITE_DISCONNECTED_TYPE = "satellite-disconnected"
 class RunSatellite(Eventable):
     """Informs the satellite that the server is ready to run a pipeline."""
 
+    start_stage: Optional[PipelineStage] = None
+
     @staticmethod
     def is_type(event_type: str) -> bool:
         return event_type == _RUN_SATELLITE_TYPE
 
     def event(self) -> Event:
-        return Event(type=_RUN_SATELLITE_TYPE)
+        data: Dict[str, Any] = {}
+
+        if self.start_stage is not None:
+            data["start_stage"] = self.start_stage.value
+
+        return Event(type=_RUN_SATELLITE_TYPE, data=data)
 
     @staticmethod
     def from_event(event: Event) -> "RunSatellite":
-        return RunSatellite()
+        # note: older versions don't send event.data
+        start_stage = None
+        if value := (event.data or {}).get("start_stage"):
+            start_stage = PipelineStage(value)
+
+        return RunSatellite(start_stage=start_stage)
 
 
 @dataclass

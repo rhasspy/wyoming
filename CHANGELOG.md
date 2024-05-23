@@ -2,6 +2,7 @@
 
 ## 1.5.4
 
+- Add support for voice timers
 - Add `speaker` field to `detect` event
 - Refactor HTTP servers
 

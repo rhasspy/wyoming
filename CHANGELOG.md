@@ -3,6 +3,10 @@
 ## 1.5.4
 
 - Add support for voice timers
+    - `timer-started`
+    - `timer-updated`
+    - `timer-cancelled`
+    - `timer-finished`
 - Add `speaker` field to `detect` event
 - Refactor HTTP servers
 

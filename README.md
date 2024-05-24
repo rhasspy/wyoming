@@ -228,6 +228,12 @@ Control of one or more remote voice satellites connected to a central server.
 * `streaming-started` - satellite has started streaming audio to the server
 * `streaming-stopped` - satellite has stopped streaming audio to the server
 
+### Timers
+
+* `timer-started` - a new timer has started
+* `timer-updated` - timer has been paused/resumed or time has been added/removed
+* `timer-cancelled` - timer was cancelled
+* `timer-finished` - timer finished without being cancelled
 
 ## Event Flow
 

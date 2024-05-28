@@ -222,6 +222,7 @@ Play audio stream.
 Control of one or more remote voice satellites connected to a central server.
 
 * `run-satellite` - informs satellite that server is ready to run pipelines
+    * `start_stage` - request pipelines with a specific starting stage (string, optional)
 * `pause-satellite` - informs satellite that server is not ready anymore to run pipelines
 * `satellite-connected` - satellite has connected to the server
 * `satellite-disconnected` - satellite has been disconnected from the server

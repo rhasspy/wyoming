@@ -4,7 +4,7 @@ import logging
 import socket
 from typing import Optional
 
-_LOGGER = logging.getLogger()
+_LOGGER = logging.getLogger(__name__)
 
 try:
     from zeroconf.asyncio import AsyncServiceInfo, AsyncZeroconf

@@ -10,7 +10,7 @@ from .audio import AudioChunk, AudioChunkConverter
 from .client import AsyncClient
 from .event import Event, Eventable
 
-_LOGGER = logging.getLogger()
+_LOGGER = logging.getLogger(__name__)
 
 _PLAYED_TYPE = "played"
 

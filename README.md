@@ -232,9 +232,23 @@ Control of one or more remote voice satellites connected to a central server.
 ### Timers
 
 * `timer-started` - a new timer has started
+    * `id` - unique id of timer (string, required)
+    * `total_seconds` - number of seconds the timer should run for (int, required)
+    * `name` - user-provided name for timer (string, optional)
+    * `start_hours` - hours the timer should run for as spoken by user (int, optional)
+    * `start_minutes` - minutes the timer should run for as spoken by user (int, optional)
+    * `start_seconds` - seconds the timer should run for as spoken by user (int, optional)
+    * `command` - optional command that the server will execute when the timer is finished
+        * `text` - text of command to execute (string, required)
+        * `language` - language of the command (string, optional)
 * `timer-updated` - timer has been paused/resumed or time has been added/removed
+    * `id` - unique id of timer (string, required)
+    * `is_active` - true if timer is running, false if paused (bool, required)
+    * `total_seconds` - number of seconds that the timer should run for now (int, required)
 * `timer-cancelled` - timer was cancelled
+    * `id` - unique id of timer (string, required)
 * `timer-finished` - timer finished without being cancelled
+    * `id` - unique id of timer (string, required)
 
 ## Event Flow
 

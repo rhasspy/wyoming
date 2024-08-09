@@ -10,7 +10,7 @@ from .audio import AudioChunk
 from .client import AsyncClient
 from .event import Event
 
-_LOGGER = logging.getLogger()
+_LOGGER = logging.getLogger(__name__)
 
 DOMAIN = "mic"
 

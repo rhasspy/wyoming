@@ -1,4 +1,5 @@
 """Information about available services, models, etc.."""
+
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
@@ -177,8 +178,39 @@ class Satellite(Artifact):
     area: Optional[str] = None
     """Name of the area the satellite is in."""
 
-    snd_format: Optional[AudioFormat] = None
-    """Format of the satellite's audio output."""
+    has_vad: Optional[bool] = None
+    """True if a local VAD will be used to detect the end of voice commands."""
+
+    active_wake_words: Optional[List[str]] = None
+    """Wake words that are currently being listened for."""
+
+    max_active_wake_words: Optional[int] = None
+    """Maximum number of local wake words that can be run simultaneously."""
+
+    supports_trigger: Optional[bool] = None
+    """Satellite supports remotely triggering pipeline runs."""
+
+
+# -----------------------------------------------------------------------------
+
+
+@dataclass
+class MicProgram(Artifact):
+    """Microphone information."""
+
+    mic_format: AudioFormat
+    """Input audio format."""
+
+
+# -----------------------------------------------------------------------------
+
+
+@dataclass
+class SndProgram(Artifact):
+    """Sound output information."""
+
+    snd_format: AudioFormat
+    """Output audio format."""
 
 
 # -----------------------------------------------------------------------------
@@ -203,6 +235,12 @@ class Info(Eventable):
     wake: List[WakeProgram] = field(default_factory=list)
     """Wake word detection services."""
 
+    mic: List[MicProgram] = field(default_factory=list)
+    """Audio input services."""
+
+    snd: List[SndProgram] = field(default_factory=list)
+    """Audio output services."""
+
     satellite: Optional[Satellite] = None
     """Satellite information."""
 
@@ -217,6 +255,8 @@ class Info(Eventable):
             "handle": [p.to_dict() for p in self.handle],
             "intent": [p.to_dict() for p in self.intent],
             "wake": [p.to_dict() for p in self.wake],
+            "mic": [p.to_dict() for p in self.mic],
+            "snd": [p.to_dict() for p in self.snd],
         }
 
         if self.satellite is not None:
@@ -239,5 +279,7 @@ class Info(Eventable):
             handle=[HandleProgram.from_dict(d) for d in event.data.get("handle", [])],
             intent=[IntentProgram.from_dict(d) for d in event.data.get("intent", [])],
             wake=[WakeProgram.from_dict(d) for d in event.data.get("wake", [])],
+            mic=[MicProgram.from_dict(d) for d in event.data.get("mic", [])],
+            snd=[SndProgram.from_dict(d) for d in event.data.get("snd", [])],
             satellite=satellite,
         )

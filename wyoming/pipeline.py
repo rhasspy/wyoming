@@ -1,9 +1,9 @@
 """Pipeline events."""
+
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
-from .audio import AudioFormat
 from .event import Event, Eventable
 
 _RUN_PIPELINE_TYPE = "run-pipeline"
@@ -38,14 +38,17 @@ class RunPipeline(Eventable):
     end_stage: PipelineStage
     """Stage to end the pipeline on."""
 
-    name: Optional[str] = None
-    """Name of pipeline to run"""
+    wake_word_name: Optional[str] = None
+    """Name of wake word that triggered this pipeline."""
 
     restart_on_end: bool = False
     """True if pipeline should restart automatically after ending."""
 
-    snd_format: Optional[AudioFormat] = None
-    """Desired format for audio output."""
+    wake_word_names: Optional[List[str]] = None
+    """Wake word names to listen for (start_stage = wake)."""
+
+    announce_text: Optional[str] = None
+    """Text to announce using text-to-speech (start_stage = tts)"""
 
     def __post_init__(self) -> None:
         start_valid = True
@@ -104,33 +107,26 @@ class RunPipeline(Eventable):
             "restart_on_end": self.restart_on_end,
         }
 
-        if self.name is not None:
-            data["name"] = self.name
+        if self.wake_word_name is not None:
+            data["wake_word_name"] = self.wake_word_name
 
-        if self.snd_format is not None:
-            data["snd_format"] = {
-                "rate": self.snd_format.rate,
-                "width": self.snd_format.width,
-                "channels": self.snd_format.channels,
-            }
+        if self.wake_word_names:
+            data["wake_word_names"] = self.wake_word_names
+
+        if self.announce_text is not None:
+            data["announce_text"] = self.announce_text
 
         return Event(type=_RUN_PIPELINE_TYPE, data=data)
 
     @staticmethod
     def from_event(event: Event) -> "RunPipeline":
         assert event.data is not None
-        snd_format = event.data.get("snd_format")
 
         return RunPipeline(
             start_stage=PipelineStage(event.data["start_stage"]),
             end_stage=PipelineStage(event.data["end_stage"]),
-            name=event.data.get("name"),
+            wake_word_name=event.data.get("wake_word_name"),
             restart_on_end=event.data.get("restart_on_end", False),
-            snd_format=AudioFormat(
-                rate=snd_format["rate"],
-                width=snd_format["width"],
-                channels=snd_format["channels"],
-            )
-            if snd_format
-            else None,
+            wake_word_names=event.data.get("wake_word_names"),
+            announce_text=event.data.get("announce_text"),
         )

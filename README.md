@@ -134,7 +134,17 @@ Describe available services.
             * `version` - version of the model (string, optional)
     * `satellite` - information about voice satellite (optional)
         * `area` - name of area where satellite is located (string, optional)
-        * `snd_format` - optimal audio output format of satellite (optional)
+        * `has_vad` - true if the end of voice commands will be detected locally (boolean, optional)
+        * `active_wake_words` - list of wake words that are actively being listend for (list of string, optional)
+        * `max_active_wake_words` - maximum number of local wake words that can be run simultaneously (number, optional)
+        * `supports_trigger` - true if satellite supports remotely-triggered pipelines
+    * `mic` - list of audio input services (optional)
+        * `mic_format` - audio input format (required)
+            * `rate` - sample rate in hertz (int, required)
+            * `width` - sample width in bytes (int, required)
+            * `channels` - number of channels (int, required)
+    * `snd` - list of audio output services (optional)
+        * `snd_format` - audio output format (required)
             * `rate` - sample rate in hertz (int, required)
             * `width` - sample width in bytes (int, required)
             * `channels` - number of channels (int, required)
@@ -222,12 +232,27 @@ Play audio stream.
 Control of one or more remote voice satellites connected to a central server.
 
 * `run-satellite` - informs satellite that server is ready to run pipelines
-    * `start_stage` - request pipelines with a specific starting stage (string, optional)
 * `pause-satellite` - informs satellite that server is not ready anymore to run pipelines
 * `satellite-connected` - satellite has connected to the server
 * `satellite-disconnected` - satellite has been disconnected from the server
 * `streaming-started` - satellite has started streaming audio to the server
 * `streaming-stopped` - satellite has stopped streaming audio to the server
+
+Pipelines are run on the server, but can be triggered remotely from the server as well.
+
+* `run-pipeline` - runs a pipeline on the server or asks the satellite to run it when possible
+    * `start_stage` - pipeline stage to start at (string, required)
+    * `end_stage` - pipeline stage to end at (string, required)
+    * `wake_word_name` - name of detected wake word that started this pipeline (string, optional)
+        * From client only
+    * `wake_word_names` - names of wake words to listen for (list of string, optional)
+        * From server only
+        * `start_stage` must be "wake"
+    * `announce_text` - text to speak on the satellite
+        * From server only
+        * `start_stage` must be "tts"
+    * `restart_on_end` - true if the server should re-run the pipeline after it ends (boolean, default is false)
+        * Only used for always-on streaming satellites
 
 ### Timers
 

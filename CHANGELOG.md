@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.6.0
+
+- Update `run-pipeline` to be bi-directional
+    - Add `wake_word_name`
+    - Add `wake_word_names`
+    - Add `announce_text`
+    - Remove `snd_format`
+- Update satellite info
+    - Add `has_vad`
+    - Add `active_wake_words`
+    - Add `max_active_wake_words`
+    - Add `supports_trigger`
+    - Remove `snd_format`
+- Add `mic` and `snd` to `info` message
+- Update wake word satellite
+    - Support remote pipeline triggering
+    - Support local VAD
+
 ## 1.5.4
 
 - Add support for voice timers

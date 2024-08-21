@@ -1,4 +1,5 @@
 """Speech to text."""
+
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
@@ -19,17 +20,24 @@ class Transcript(Eventable):
     context: Optional[Dict[str, Any]] = None
     """Context for next interaction."""
 
+    language: str | None = None
+    """Language of the text."""
+
     @staticmethod
     def is_type(event_type: str) -> bool:
         return event_type == _TRANSCRIPT_TYPE
 
     def event(self) -> Event:
-        return Event(type=_TRANSCRIPT_TYPE, data={"text": self.text})
+        data: Dict[str, Any] = {"text": self.text}
+        if self.language is not None:
+            data["language"] = self.language
+
+        return Event(type=_TRANSCRIPT_TYPE, data=data)
 
     @staticmethod
     def from_event(event: Event) -> "Transcript":
         assert event.data is not None
-        return Transcript(text=event.data["text"])
+        return Transcript(text=event.data["text"], language=event.data.get("language"))
 
 
 @dataclass

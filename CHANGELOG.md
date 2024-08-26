@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.0
+
+- Add `language` to `transcript`
+
 ## 1.6.0
 
 - Update `run-pipeline` to be bi-directional

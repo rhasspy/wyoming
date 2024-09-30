@@ -10,7 +10,7 @@ A peer-to-peer protocol for voice assistants (basically [JSONL](https://jsonline
 
 Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and [Home Assistant](https://www.home-assistant.io/integrations/wyoming) for communication with voice services.
 
-This is an open standard of the [Open Home Foundation](https://www.openhomefoundation.org/).
+[![An open standard from the Open Home Foundation](https://www.openhomefoundation.org/badges/ohf-open-standard.png)](https://www.openhomefoundation.org/)
 
 ## Wyoming Projects
 

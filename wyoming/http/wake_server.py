@@ -9,7 +9,7 @@ from flask import Response, jsonify, request
 from wyoming.audio import wav_to_chunks
 from wyoming.client import AsyncClient
 from wyoming.error import Error
-from wyoming.wake import Detection, NotDetected
+from wyoming.wake import Detect, Detection, NotDetected
 
 from .shared import get_app, get_argument_parser
 
@@ -19,6 +19,7 @@ CONF_PATH = _DIR / "conf" / "wake.yaml"
 
 def main():
     parser = get_argument_parser()
+    parser.add_argument("--wake-word-name", action="append")
     parser.add_argument("--samples-per-chunk", type=int, default=1024)
     args = parser.parse_args()
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
@@ -32,6 +33,9 @@ def main():
             raise ValueError("URI is required")
 
         async with AsyncClient.from_uri(uri) as client:
+            if args.wake_word_name:
+                await client.write_event(Detect(args.wake_word_name).event())
+
             with io.BytesIO(request.data) as wav_io:
                 with wave.open(wav_io, "rb") as wav_file:
                     chunks = wav_to_chunks(

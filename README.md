@@ -24,6 +24,7 @@ Used in [Rhasspy](https://github.com/rhasspy/rhasspy3/) and [Home Assistant](htt
     * [openWakeWord](https://github.com/rhasspy/wyoming-openwakeword)
     * [porcupine1](https://github.com/rhasspy/wyoming-porcupine1)
     * [snowboy](https://github.com/rhasspy/wyoming-snowboy)
+    * [microWakeWord](https://github.com/rhasspy/wyoming-microwakeword)
 * Speech-to-text
     * [Faster Whisper](https://github.com/rhasspy/wyoming-faster-whisper)
     * [Vosk](https://github.com/rhasspy/wyoming-vosk)

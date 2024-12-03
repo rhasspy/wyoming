@@ -1,0 +1,74 @@
+---
+openapi: "3.0.0"
+info:
+  title: 'Wyoming Intent'
+  version: '1.0.0'
+  description: 'API for Intent Recognition'
+paths:
+  /api/info:
+    get:
+      summary: 'Get service information'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+  /api/recognize-intent:
+    post:
+      summary: 'Recognize or handle intent'
+      requestBody:
+        description: 'Text to process'
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+      parameters:
+        - in: query
+          name: language
+          description: 'Language of text'
+          schema:
+            type: string
+        - in: query
+          name: uri
+          description: 'URI of Wyoming intent service'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+    get:
+      summary: 'Recognize or handle intent'
+      parameters:
+        - in: query
+          name: text
+          description: 'Text to process'
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: language
+          description: 'Language of text'
+          schema:
+            type: string
+        - in: query
+          name: uri
+          description: 'URI of Wyoming intent service'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.0 
+
+- Add is_final to Transcript, indicate if text is final stt result
+- Add sendPartials to Transcribe, indicate if requestor supports partial results
+
 ## 1.7.0
 
 - Add `language` to `transcript`

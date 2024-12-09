@@ -23,6 +23,8 @@ class Transcript(Eventable):
     language: str | None = None
     """Language of the text."""
 
+    is_final: Optional[bool] = False
+
     @staticmethod
     def is_type(event_type: str) -> bool:
         return event_type == _TRANSCRIPT_TYPE
@@ -31,13 +33,14 @@ class Transcript(Eventable):
         data: Dict[str, Any] = {"text": self.text}
         if self.language is not None:
             data["language"] = self.language
+        data["is_final"]=self.is_final
 
         return Event(type=_TRANSCRIPT_TYPE, data=data)
 
     @staticmethod
     def from_event(event: Event) -> "Transcript":
         assert event.data is not None
-        return Transcript(text=event.data["text"], language=event.data.get("language"))
+        return Transcript(text=event.data["text"], language=event.data.get("language"), is_final=event.data.get("is_final"))
 
 
 @dataclass
@@ -56,6 +59,9 @@ class Transcribe(Eventable):
     context: Optional[Dict[str, Any]] = None
     """Context from previous interactions."""
 
+    sendPartials: Optional[bool] = False;
+    """indicate if the receiver should send partial results if possible"""
+
     @staticmethod
     def is_type(event_type: str) -> bool:
         return event_type == _TRANSCRIBE_TYPE
@@ -68,9 +74,11 @@ class Transcribe(Eventable):
         if self.language is not None:
             data["language"] = self.language
 
+        data["sendPartials"] = self.sendPartials
+
         return Event(type=_TRANSCRIBE_TYPE, data=data)
 
     @staticmethod
     def from_event(event: Event) -> "Transcribe":
         data = event.data or {}
-        return Transcribe(name=data.get("name"), language=data.get("language"))
+        return Transcribe(name=data.get("name"), language=data.get("language"), sendPartials=data.get("sendPartials"))
